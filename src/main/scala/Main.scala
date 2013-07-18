@@ -55,6 +55,7 @@ object Main extends App {
 
     //      println(database)
     println(database.size)
+    if (database.size % 1000 == 0) dumpDatabasePretty
 
     // Recurse on the children.
     val children = parseChildren(xml)
@@ -63,7 +64,26 @@ object Main extends App {
   }
 
   def formatDatabase: String = {
-    val entries = database.toMap.toList map {
+    implicit object listLongOrdering extends Ordering[List[Long]] {
+      override def compare(x: List[Long], y: List[Long]) = {
+        if (x.size == 0 && y.size > 0) -1
+        else if (x.size > 0 && y.size == 0) 1
+        else if (x.size == 0 && y.size == 0) 0
+        else {
+          def longOrdering = implicitly[Ordering[Long]]
+
+          val comparison = longOrdering.compare(x.head, y.head)
+          if (comparison != 0) comparison
+          else compare(x.tail, y.tail)
+        }
+      }
+    }
+
+    val sortedDatabase = database.toList.sortBy {
+      case (node, (title, nodePath)) => nodePath
+    }
+
+    val entries = sortedDatabase map {
       case (node, (title, nodePath)) =>
         s"$node: $title ${nodePath.mkString("/")}"
     }
@@ -83,6 +103,7 @@ object Main extends App {
   //  }
 
   buildDatabaseFromNode(-2000)
+//    buildDatabaseFromNode(20)
   dumpDatabasePretty
 
   //  val svc = nodeRequest(10)
