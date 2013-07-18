@@ -20,7 +20,11 @@ object BrowseNodesScrapeBuild extends Build {
 
   def extraLibraryDependencies = Seq(
     libraryDependencies ++= Seq(
-
+      "org.jsoup" % "jsoup" % "1.7.2",
+      "net.databinder.dispatch" %% "dispatch-core" % "0.10.1",
+      "org.slf4j" % "slf4j-simple" % "1.7.5",
+      "org.scala-lang" %% "scala-pickling" % "0.8.0-SNAPSHOT",
+      "org.apache.commons" % "commons-io" % "1.3.2"
     )
   )
 
